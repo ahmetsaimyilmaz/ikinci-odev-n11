@@ -12,11 +12,11 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        List<Customer> customers = new ArrayList<>();
+        List<Customer> customers = new ArrayList<>(); //Müşterileri tuttuğum bir array listim var.
 
-        Customer customer1 = new Customer("Alice", LocalDate.of(2024, 6, 15));
-        customer1.addInvoice(new Invoice(1200, LocalDate.of(2024, 6, 20), Category.TECHNOLOGY));
-        customer1.addInvoice(new FoodInvoice(500, LocalDate.of(2024, 6, 25)));
+        Customer customer1 = new Customer("Alice", LocalDate.of(2024, 6, 15)); //Yeni müşteri yaratıp arrayliste ekliyorum.
+        customer1.addInvoice(new Invoice(1200, LocalDate.of(2024, 6, 20), Category.TECHNOLOGY));//İstediğim kategori tipine göre ilgili enum ile obje yaratabilirim.
+        customer1.addInvoice(new FoodInvoice(500, LocalDate.of(2024, 6, 25)));//Veya defaultu Food seçili olan obje de yaratabilirim.
 
         Customer customer2 = new Customer("Bob", LocalDate.of(2024, 3, 11));
         customer2.addInvoice(new Invoice(1600, LocalDate.of(2024, 3, 15), Category.COSMETIC));
@@ -44,14 +44,7 @@ public class Main {
 
         System.out.println("*****************************");
 
-        System.out.println("Total invoices amount for customers registered in June:");
-        customers.stream()
-                .filter(c -> c.getRegistrationDate().getMonth() == Month.JUNE)
-                .flatMap(c -> c.getInvoices().stream())
-                .mapToDouble(Invoice::getAmount)
-                .sum();
 
-        System.out.println("*****************************");
 
         System.out.println("All Invoices:");
         customers.stream()
@@ -65,6 +58,33 @@ public class Main {
                 .flatMap(c -> c.getInvoices().stream())
                 .filter(i -> i.getAmount() > 1500)
                 .forEach(i -> System.out.println("Amount: " + i.getAmount() + ", Date: " + i.getDate()));
+        System.out.println("*****************************");
+        System.out.println("Average of invoices over 1500TL:");
+        double averageAmount = customers.stream()
+                .flatMap(c -> c.getInvoices().stream())
+                .filter(i -> i.getAmount() > 1500)
+                .mapToDouble(Invoice::getAmount)
+                .average()
+                .orElse(0);
+        System.out.println(averageAmount);
+
+        System.out.println("*****************************");
+        System.out.println("Invoices under 500TL:");
+        customers.stream()
+                .flatMap(c -> c.getInvoices().stream())
+                .filter(i -> i.getAmount() > 1500)
+                .forEach(i -> System.out.println("Amount: " + i.getAmount() + ", Date: " + i.getDate()));
+
+        System.out.println("*****************************");
+        double totalAmountForJuneRegistrations = customers.stream()
+                .filter(customer -> customer.getRegistrationDate().getMonth() == Month.JUNE)
+                .flatMap(customer -> customer.getInvoices().stream())
+                .mapToDouble(Invoice::getAmount)
+                .sum();
+
+        System.out.println("Total invoice amount for customers registered in June: " + totalAmountForJuneRegistrations);
+
+
 
     }
 }
